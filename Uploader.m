@@ -106,6 +106,13 @@
   NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration delegate:(id)self delegateQueue:[NSOperationQueue mainQueue]];
   _task = [session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
       NSString * str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+      // When numerous downloads are called the sessions are not always invalidated and cleared by iOS14. 
+      // This leads to error 28 – no space left on device so we manually flush and invalidate to free up space
+      if(session != nil){
+        [session flushWithCompletitonHandler:^{
+          [session finishTasksAndInvalidate];
+        }];
+      }
       return self->_params.completeCallback(str, response);
   }];
   [_task resume];

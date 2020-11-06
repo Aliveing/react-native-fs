@@ -131,7 +131,7 @@
   // When numerous downloads are called the sessions are not always invalidated and cleared by iOS14. 
   // This leads to error 28 – no space left on device so we manually flush and invalidate to free up space
   if(session != nil){
-    [session flushWithCompletitonHandler:^{
+    [session flushWithCompletionHandler:^{
       [session finishTasksAndInvalidate];
     }];
   }
